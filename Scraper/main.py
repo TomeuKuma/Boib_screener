@@ -1,7 +1,6 @@
-from database_manager import MongoDB
-from scrape_manager import BoibScraper
-from config import DB_URL, DB_NAME, COLLECTION_NAME
-import warnings
+from Scraper.database_manager import MongoDB
+from Scraper.scrape_manager import BoibScraper
+from Scraper.config import DB_URL, DB_NAME, COLLECTION_NAME
 
 
 def init_database(db, collection_name, init_url_id: str, echo=False):
@@ -34,6 +33,18 @@ def update_database(db, collection_name, echo=False):
             print(str(url_number) + " scrapped")
         print('La colección de datos {} está actualizada!'.format(collection_name))
         # db.close()
+        
+def get_data():
+    
+    db = MongoDB(DB_URL, DB_NAME)
+    if not db.get_all(COLLECTION_NAME):
+        print('Se va a iniciar una nueva base de datos.')
+        init_url_id = input("Introduce una seed de inicio (ej. '11690')")
+        init_database(db, COLLECTION_NAME, init_url_id, echo=False)
+        print('La colección {} se ha iniciado con el seed {}'.format(COLLECTION_NAME, init_url_id))
+    else:
+        #db.delete_all(COLLECTION_NAME)
+        update_database(db, COLLECTION_NAME, echo=False)
 
 
 # código principal
